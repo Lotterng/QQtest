@@ -20,7 +20,7 @@ const handleShare = () => {
       title: 'QQ分享卡片示例', // 分享标题（最多36字）
       summary: '这是一个演示QQ卡片分享功能的示例页面，展示了如何设置分享标题、描述和图片。', // 分享描述（最多80字）
       pic: 'https://picsum.photos/400/300', // 分享图片URL（建议尺寸：400x300）
-      url: 'https://vercel.com/hyvins-projects/q-qtest' // 分享链接（使用当前页面URL）
+      url: 'https://q-qtest-hyvins-projects.vercel.app/' // 分享链接（使用当前页面URL）
     })
     
     // 更新状态
@@ -39,7 +39,7 @@ onMounted(() => {
       title: 'QQ分享卡片示例',
       summary: '页面加载时自动设置的分享信息',
       pic: 'https://picsum.photos/400/300',
-      url: 'https://vercel.com/hyvins-projects/q-qtest'
+      url: 'https://q-qtest-hyvins-projects.vercel.app/'
     })
   }
 })
@@ -51,7 +51,7 @@ onMounted(() => {
       <p>点击下方按钮设置分享信息，在QQ中通过右上角菜单分享卡片式链接</p>
       
       <div class="qr-code">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://vercel.com/hyvins-projects/q-qtest" alt="QQ分享二维码">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://q-qtest-hyvins-projects.vercel.app/" alt="QQ分享二维码">
           <div class="qr-label">使用QQ扫码体验功能</div>
       </div>
       
