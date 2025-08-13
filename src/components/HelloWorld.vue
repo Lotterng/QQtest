@@ -11,7 +11,7 @@
         title:    'QQ分享卡片示例',
         desc:     '演示QQ卡片分享功能',
         share_url:'https://xbuilder-test.qiniu.io/',
-        image_url:'http://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png'
+        image_url:'https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png'
     };
 
 
