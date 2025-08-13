@@ -18,14 +18,6 @@
     // 按钮点击
     const handleShare = () => {
         if (window.mqq && mqq.device && mqq.device.isMobileQQ()) {
-            document.body.insertAdjacentHTML(
-                'beforeend',
-                `<div id="debug" style="position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;padding:6px;font-size:12px;z-index:9999">
-                    mqq? ${!!window.mqq}<br>
-                    isMobileQQ? ${window.mqq && window.mqq.device && window.mqq.device.isMobileQQ?.()}<br>
-                    UA: ${navigator.userAgent}
-                </div>`
-            )
             mqq.invoke('data', 'setShareInfo', shareData);
             alert('已设置，右上角··· → 分享给好友');
         } else {
