@@ -1,48 +1,36 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+    import { onMounted, ref } from 'vue'
 
-const status = ref('等待设置分享信息...')
-
-const setShareInfo = (info) => {
-  // QQ分享API调用
-  if (window.setShareInfo) {
-    window.setShareInfo(info)
-  }
-}
-
-const handleShare = () => {
-  // 检查是否在QQ浏览器中
-  const isQQ = navigator.userAgent.match(/QQ\/([\d.]+)/i)
-  
-  if (isQQ) {
-    // 设置分享信息
-    setShareInfo({
-      title: 'QQ分享卡片示例', // 分享标题（最多36字）
-      summary: '这是一个演示QQ卡片分享功能的示例页面，展示了如何设置分享标题、描述和图片。', // 分享描述（最多80字）
-      pic: 'https://picsum.photos/400/300', // 分享图片URL（建议尺寸：400x300）
-      url: 'https://xbuilder-test.qiniu.io/' // 分享链接（使用当前页面URL）
-    })
+    onMounted(() => {
     
-    // 更新状态
-    status.value = '<span class="success">分享信息设置成功！</span> 请点击QQ右上角"•••"按钮进行分享。'
-  } else {
-    // 不在QQ浏览器中
-    status.value = '<span class="error">当前不在QQ浏览器中！</span> 请使用QQ扫码或在QQ中打开此页面。'
-  }
-}
-
-// 页面加载时尝试自动设置分享信息（可选）
-onMounted(() => {
-  const isQQ = navigator.userAgent.match(/QQ\/([\d.]+)/i)
-  if (isQQ) {
-    setShareInfo({
-      title: 'QQ分享卡片示例',
-      summary: '页面加载时自动设置的分享信息',
-      pic: 'https://picsum.photos/400/300',
-      url: 'https://xbuilder-test.qiniu.io/'
     })
-  }
-})
+
+    const status = ref('等待设置分享信息...')
+
+    const shareData = {
+        title: 'QQ分享卡片示例',
+        desc: '这是一个演示QQ卡片分享功能的示例页面',
+        share_url: location.href.split('#')[0],
+        image_url: 'https://picsum.photos/400/300'
+    }
+
+
+    const handleShare = () => {
+        if (window.mqq && mqq.device && mqq.device.isMobileQQ()) {
+            mqq.data.setShareInfo(shareData)
+            alert('已设置好分享卡片，请点击右上角“···”→“分享给好友”')
+        } else {
+            alert('请使用 QQ 扫码或在 QQ 内打开页面')
+        }
+    }
+
+    // 页面加载时尝试自动设置分享信息（可选）
+    onMounted(() => {
+        // 判断是不是 QQ 内置浏览器
+        if (window.mqq && mqq.device && mqq.device.isMobileQQ()) {
+            mqq.data.setShareInfo(shareData)
+        }
+    })
 </script>
 
 <template>
@@ -55,12 +43,10 @@ onMounted(() => {
           <div class="qr-label">使用QQ扫码体验功能</div>
       </div>
       
-      <button @click="handleShare" class="share-btn">设置QQ分享卡片</button>
       
       <div class="instructions">
           <h3>使用说明：</h3>
           <ol>
-              <li>点击上方按钮设置分享信息</li>
               <li>使用QQ扫码或直接打开本页</li>
               <li>在QQ内置浏览器中打开页面</li>
               <li>点击右上角"•••"按钮</li>
