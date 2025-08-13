@@ -26,13 +26,13 @@
     };
 
     // 页面加载时尝试自动设置分享信息（可选）
-    onMounted(() => {
-        // 判断是不是 QQ 内置浏览器
-        // 注册
-        if (window.mqq && mqq.device && mqq.device.isMobileQQ()) {
-            window.mqq.invoke('data', 'setShareInfo', shareData);
-        }
-    })
+    // onMounted(() => {
+    //     // 判断是不是 QQ 内置浏览器
+    //     // 注册
+    //     if (window.mqq && mqq.device && mqq.device.isMobileQQ()) {
+    //         window.mqq.invoke('data', 'setShareInfo', shareData);
+    //     }
+    // })
 </script>
 
 <template>
