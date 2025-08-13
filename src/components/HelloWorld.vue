@@ -11,7 +11,7 @@
         title: 'QQ分享卡片示例',
         desc: '这是一个演示QQ卡片分享功能的示例页面',
         share_url: location.href.split('#')[0],
-        image_url: 'https://picsum.photos/400/300'
+        image_url: 'https://qzonestyle.gtimg.cn/qz-proj/wx-qzone-client/wx/assets/img/logo@2x.png'
     }
 
 
