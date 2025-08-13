@@ -8,27 +8,37 @@
     const status = ref('等待设置分享信息...')
 
     const shareData = {
-        title: 'QQ分享卡片示例',
-        desc: '这是一个演示QQ卡片分享功能的示例页面',
-        share_url: location.href.split('#')[0],
-        image_url: 'https://qzonestyle.gtimg.cn/qz-proj/wx-qzone-client/wx/assets/img/logo@2x.png'
-    }
+        title:    'QQ分享卡片示例',
+        desc:     '演示QQ卡片分享功能',
+        share_url:'https://xbuilder-test.qiniu.io/',
+        image_url:'https://qzonestyle.gtimg.cn/qz-proj/wx-qzone-client/wx/assets/img/logo@2x.png'
+    };
 
 
+    // 按钮点击
     const handleShare = () => {
         if (window.mqq && mqq.device && mqq.device.isMobileQQ()) {
-            mqq.data.setShareInfo(shareData)
-            alert('已设置好分享卡片，请点击右上角“···”→“分享给好友”')
+            document.body.insertAdjacentHTML(
+                'beforeend',
+                `<div id="debug" style="position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;padding:6px;font-size:12px;z-index:9999">
+                    mqq? ${!!window.mqq}<br>
+                    isMobileQQ? ${window.mqq && window.mqq.device && window.mqq.device.isMobileQQ?.()}<br>
+                    UA: ${navigator.userAgent}
+                </div>`
+            )
+            mqq.invoke('data', 'setShareInfo', shareData);
+            alert('已设置，右上角··· → 分享给好友');
         } else {
-            alert('请使用 QQ 扫码或在 QQ 内打开页面')
+            alert('请在 QQ 内置浏览器打开');
         }
-    }
+    };
 
     // 页面加载时尝试自动设置分享信息（可选）
     onMounted(() => {
         // 判断是不是 QQ 内置浏览器
+        // 注册
         if (window.mqq && mqq.device && mqq.device.isMobileQQ()) {
-            mqq.data.setShareInfo(shareData)
+            mqq.invoke('data', 'setShareInfo', shareData);
         }
     })
 </script>
@@ -43,7 +53,10 @@
           <div class="qr-label">使用QQ扫码体验功能</div>
       </div>
       
-      
+      <button @click="handleShare">
+        设置分享信息
+      </button>
+
       <div class="instructions">
           <h3>使用说明：</h3>
           <ol>
