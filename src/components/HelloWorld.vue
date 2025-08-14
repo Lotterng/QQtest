@@ -1,29 +1,13 @@
 <script setup>
-    import { onMounted, ref } from 'vue'
 
-    onMounted(() => {
-    
-    })
+    const shareData = {
+        title:    'QQ分享卡片示例',
+        desc:     '演示QQ卡片分享功能',
+        share_url:'https://xbuilder-test.qiniu.io/',
+        image_url:'https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png'
+    };
 
-    const status = ref('等待设置分享信息...')
-
-    // const shareData = {
-    //     title:    'QQ分享卡片示例',
-    //     desc:     '演示QQ卡片分享功能',
-    //     share_url:'https://xbuilder-test.qiniu.io/',
-    //     image_url:'https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png'
-    // };
-
-
-    // // 按钮点击
-    // const handleShare = () => {
-    //     if (window.mqq && mqq.device && mqq.device.isMobileQQ()) {
-    //         window.mqq.invoke('data', 'setShareInfo', shareData);
-    //         alert('已设置，右上角··· → 分享给好友');
-    //     } else {
-    //         alert('请在 QQ 内置浏览器打开');
-    //     }
-    // };
+    window.mqq.invoke('data', 'setShareInfo', shareData);
 
     // 页面加载时尝试自动设置分享信息（可选）
     // onMounted(() => {
