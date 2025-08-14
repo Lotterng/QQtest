@@ -5,9 +5,9 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- QQ专用标签（增强兼容性） -->
-    <meta itemprop="name" content="QQ分享卡片示例" />
+    <!-- <meta itemprop="name" content="QQ分享卡片示例" />
     <meta itemprop="description" content="演示QQ卡片分享功能" />
-    <meta itemprop="image" content="https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png" />
+    <meta itemprop="image" content="https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png" /> -->
 
     <!-- 避免QQ缓存旧数据 -->
     <meta name="referrer" content="never" />
@@ -16,7 +16,7 @@
   <body>
     <div id="app"></div>
     <div class="qr-code">
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://xbuilder-test.qiniu.io/" alt="QQ分享二维码">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://xbuilder-sharing-test.gopluscdn.com/" alt="QQ分享二维码">
       <div class="qr-label">使用QQ扫码体验功能</div>
     </div>
     <!-- <script type="module" src="/src/main.js"></script> -->
@@ -25,7 +25,7 @@
       const shareData = {
         title:    'QQ分享卡片示例',
         desc:     '演示QQ卡片分享功能',
-        share_url:'https://xbuilder-test.qiniu.io/',
+        share_url:'https://xbuilder-sharing-test.gopluscdn.com/',
         image_url:'https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png'
       };
       window.mqq.invoke('data', 'setShareInfo', shareData);
