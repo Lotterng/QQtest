@@ -5,23 +5,118 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- QQ专用标签（增强兼容性） -->
-    <meta itemprop="name" content="QQ分享卡片示例" />
+    <!-- <meta itemprop="name" content="QQ分享卡片示例" />
     <meta itemprop="description" content="演示QQ卡片分享功能" />
-    <meta itemprop="image" content="https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png" />
+    <meta itemprop="image" content="https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png" /> -->
 
     <!-- 避免QQ缓存旧数据 -->
     <meta name="referrer" content="never" />
     <title>Test</title>
+    <style>
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .api-section {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .btn:hover {
+        background: #0056b3;
+      }
+      .result {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 15px;
+        white-space: pre-wrap;
+        font-family: monospace;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .loading {
+        color: #666;
+        font-style: italic;
+      }
+      .error {
+        color: #dc3545;
+        background: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      .success {
+        color: #155724;
+        background: #d4edda;
+        border-color: #c3e6cb;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
-    <div class="qr-code">
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://xbuilder-sharing-test.gopluscdn.com/" alt="QQ分享二维码">
-      <div class="qr-label">使用QQ扫码体验功能</div>
+    
+    <div class="container">
+      <h1>微信API测试页面</h1>
+      
+      <div class="api-section">
+        <h2>获取微信Access Token</h2>
+        <p>使用以下参数调用微信API：</p>
+        <ul>
+          <li><strong>AppID:</strong> wx5f7ad87518d77bf3</li>
+          <li><strong>AppSecret:</strong> 0f62d3a8e4aec9eee4d02365d6ae0dda</li>
+        </ul>
+        <button class="btn" onclick="getWechatToken()">获取Access Token</button>
+        <div id="tokenResult" class="result" style="display: none;"></div>
+      </div>
+
+      <div class="api-section">
+        <h2>获取微信JSAPI Ticket</h2>
+        <p>使用获取到的Access Token来获取JSAPI Ticket：</p>
+        <button class="btn" onclick="getJsapiTicket()" id="ticketBtn" disabled>获取JSAPI Ticket</button>
+        <div id="ticketResult" class="result" style="display: none;"></div>
+      </div>
+
+      <div class="api-section">
+        <h2>生成微信JS接口签名</h2>
+        <p>使用获取到的JSAPI Ticket生成签名：</p>
+        <button class="btn" onclick="generateSignature()" id="signatureBtn" disabled>生成签名</button>
+        <div id="signatureResult" class="result" style="display: none;"></div>
+      </div>
+
+      <div class="api-section">
+        <h2>微信JS-SDK配置状态</h2>
+        <p>当前微信配置状态：</p>
+        <div id="wxConfigStatus" class="result">
+          <strong>状态:</strong> 未配置<br>
+          <strong>AppID:</strong> wx5f7ad87518d77bf3<br>
+          <strong>Timestamp:</strong> 未设置<br>
+          <strong>NonceStr:</strong> 未设置<br>
+          <strong>Signature:</strong> 未设置<br>
+          <strong>JS接口:</strong> updateAppMessageShareData, updateTimelineShareData
+        </div>
+      </div>
+      
+      <div class="qr-code">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://xbuilder-sharing-test.gopluscdn.com/" alt="QQ分享二维码">
+        <div class="qr-label">使用QQ扫码体验功能</div>
+      </div>
     </div>
+
     <!-- <script type="module" src="/src/main.js"></script> -->
     <script src="https://open.mobile.qq.com/sdk/qqapi.js?_bid=152"></script>
-    <!-- <script>
+    <script>
       const shareData = {
         title:    'QQ分享卡片示例',
         desc:     '演示QQ卡片分享功能',
@@ -29,17 +124,192 @@
         image_url:'https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png'
       };
       window.mqq.invoke('data', 'setShareInfo', shareData);
-    </script> -->
-    <!-- <script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    </script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha1/0.6.0/sha1.min.js"></script>
     <script>
+      // 微信配置
       wx.config({
         debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-        appId: 'wxb456c396f2a8df43', // 必填，服务号的唯一标识
-        timestamp: 1723564800, // 必填，生成签名的时间戳
+        appId: 'wx5f7ad87518d77bf3', // 必填，服务号的唯一标识
+        timestamp: '', // 必填，生成签名的时间戳
         nonceStr: '', // 必填，生成签名的随机串
         signature: '',// 必填，签名
-        jsApiList: [] // 必填，需要使用的JS接口列表
+        jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData'] // 必填，需要使用的JS接口列表
       });
-    </script> -->
+
+      // 获取微信Access Token的函数
+      async function getWechatToken() {
+        const appId = 'wx5f7ad87518d77bf3';
+        const appSecret = '0f62d3a8e4aec9eee4d02365d6ae0dda';
+        const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
+        
+        const resultDiv = document.getElementById('tokenResult');
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result loading';
+        resultDiv.textContent = '正在请求中...';
+        
+        try {
+          // 由于浏览器的CORS限制，我们需要使用代理或者后端服务
+          // 这里提供一个使用fetch的示例，但实际使用时可能需要后端支持
+          
+          // 方法1: 直接使用fetch (可能遇到CORS问题)
+          const response = await fetch(url);
+          const data = await response.json();
+          
+          if (data.access_token) {
+            resultDiv.className = 'result success';
+            resultDiv.textContent = `请求成功！\n\nAccess Token: ${data.access_token}\n\n完整响应:\n${JSON.stringify(data, null, 2)}`;
+            
+            // 启用JSAPI Ticket按钮
+            document.getElementById('ticketBtn').disabled = false;
+            // 存储access_token供后续使用
+            window.currentAccessToken = data.access_token;
+          } else {
+            resultDiv.className = 'result error';
+            resultDiv.textContent = `请求失败: ${data.errmsg || '未知错误'}\n\n完整响应:\n${JSON.stringify(data, null, 2)}`;
+          }
+        } catch (error) {
+          // 如果直接fetch失败，显示错误信息和解决方案
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `请求失败: ${error.message}\n\n可能的原因:\n1. CORS跨域限制\n2. 网络连接问题\n\n解决方案:\n1. 使用后端代理\n2. 使用JSONP\n3. 在微信环境中测试\n\nAPI URL: ${url}`;
+        }
+      }
+
+             // 获取微信JSAPI Ticket的函数
+       async function getJsapiTicket() {
+         if (!window.currentAccessToken) {
+           alert('请先获取Access Token！');
+           return;
+         }
+         
+         const accessToken = window.currentAccessToken;
+         const url = `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${accessToken}&type=jsapi`;
+        
+        const resultDiv = document.getElementById('ticketResult');
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result loading';
+        resultDiv.textContent = '正在请求中...';
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+
+                     if (data.ticket) {
+             resultDiv.className = 'result success';
+             resultDiv.textContent = `请求成功！\n\nJSAPI Ticket: ${data.ticket}\n\n完整响应:\n${JSON.stringify(data, null, 2)}`;
+             
+             // 启用签名生成按钮
+             document.getElementById('signatureBtn').disabled = false;
+             // 存储ticket供后续使用
+             window.currentTicket = data.ticket;
+           } else {
+            resultDiv.className = 'result error';
+            resultDiv.textContent = `请求失败: ${data.errmsg || '未知错误'}\n\n完整响应:\n${JSON.stringify(data, null, 2)}`;
+          }
+        } catch (error) {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `请求失败: ${error.message}\n\n可能的原因:\n1. CORS跨域限制\n2. 网络连接问题\n\n解决方案:\n1. 使用后端代理\n2. 使用JSONP\n3. 在微信环境中测试\n\nAPI URL: ${url}`;
+        }
+      }
+
+             // 生成微信JS接口签名的函数
+       async function generateSignature() {
+         if (!window.currentTicket) {
+           alert('请先获取JSAPI Ticket！');
+           return;
+         }
+         
+         const ticket = window.currentTicket;
+         const nonceStr = Math.random().toString(36).substr(2, 16); // 生成16位随机字符串
+         const timestamp = Math.floor(Date.now() / 1000);
+         const url = window.location.href.split('#')[0]; // 当前页面URL，去掉哈希部分
+
+         const string1 = `jsapi_ticket=${ticket}&noncestr=${nonceStr}&timestamp=${timestamp}&url=${url}`;
+         const signature = sha1(string1);
+
+                 const resultDiv = document.getElementById('signatureResult');
+         resultDiv.style.display = 'block';
+         resultDiv.className = 'result success';
+         resultDiv.textContent = `签名生成成功！\n\n签名: ${signature}\n\n字符串1: ${string1}\n\n完整响应:\n${JSON.stringify({ ticket, nonceStr, timestamp, url, string1, signature }, null, 2)}`;
+         
+                  // 自动更新wx.config中的签名参数
+         updateWxConfig(timestamp, nonceStr, signature);
+       }
+
+       // 更新微信配置的函数
+       function updateWxConfig(timestamp, nonceStr, signature) {
+         // 更新wx.config中的签名参数
+         wx.config({
+           debug: true,
+           appId: 'wx5f7ad87518d77bf3',
+           timestamp: timestamp,
+           nonceStr: nonceStr,
+           signature: signature,
+           jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData']
+         });
+         
+         // 配置成功后，设置分享数据
+         wx.ready(function() {
+           console.log('微信JS-SDK配置成功！');
+           
+           // 更新配置状态显示
+           updateWxConfigStatus('已配置', timestamp, nonceStr, signature);
+           
+           // 设置分享给朋友的数据
+           wx.updateAppMessageShareData({
+             title: '微信分享测试页面',
+             desc: '这是一个测试微信分享功能的页面',
+             link: window.location.href.split('#')[0],
+             imgUrl: 'https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png',
+             success: function() {
+               console.log('分享给朋友设置成功');
+             }
+           });
+           
+           // 设置分享到朋友圈的数据
+           wx.updateTimelineShareData({
+             title: '微信分享测试页面',
+             link: window.location.href.split('#')[0],
+             imgUrl: 'https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png',
+             success: function() {
+               console.log('分享到朋友圈设置成功');
+             }
+           });
+         });
+         
+         // 配置失败的处理
+         wx.error(function(res) {
+           console.error('微信JS-SDK配置失败:', res);
+           alert('微信JS-SDK配置失败: ' + JSON.stringify(res));
+         });
+       }
+
+       // 更新微信配置状态显示的函数
+       function updateWxConfigStatus(status, timestamp, nonceStr, signature) {
+         const statusDiv = document.getElementById('wxConfigStatus');
+         statusDiv.innerHTML = `
+           <strong>状态:</strong> ${status}<br>
+           <strong>AppID:</strong> wx5f7ad87518d77bf3<br>
+           <strong>Timestamp:</strong> ${timestamp}<br>
+           <strong>NonceStr:</strong> ${nonceStr}<br>
+           <strong>Signature:</strong> ${signature}<br>
+           <strong>JS接口:</strong> updateAppMessageShareData, updateTimelineShareData
+         `;
+         
+         if (status === '已配置') {
+           statusDiv.className = 'result success';
+         } else {
+           statusDiv.className = 'result';
+         }
+       }
+
+      // 页面加载完成后的初始化
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('页面加载完成，微信API已准备就绪');
+        console.log('AppID:', 'wx5f7ad87518d77bf3');
+        console.log('AppSecret:', '0f62d3a8e4aec9eee4d02365d6ae0dda');
+      });
+    </script>
   </body>
 </html>
