@@ -3,7 +3,7 @@
     const shareData = {
         title:    'QQ分享卡片示例',
         desc:     '演示QQ卡片分享功能',
-        share_url:'https://xbuilder-test.qiniu.io/',
+        share_url:'https://xbuilder-sharing-test.gopluscdn.com/',
         image_url:'https://i.gtimg.cn/open/app_icon/05/58/35/77/1105583577_100_m.png'
     };
 
@@ -25,7 +25,7 @@
       <p>点击下方按钮设置分享信息，在QQ中通过右上角菜单分享卡片式链接</p>
       
       <div class="qr-code">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://xbuilder-test.qiniu.io/" alt="QQ分享二维码">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://xbuilder-sharing-test.gopluscdn.com/" alt="QQ分享二维码">
           <div class="qr-label">使用QQ扫码体验功能</div>
       </div>
       
