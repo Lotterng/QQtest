@@ -1,0 +1,20 @@
+{
+  "functions": {
+    "api/wechat-token.js": {
+      "maxDuration": 30
+    },
+    "api/wechat-ticket.js": {
+      "maxDuration": 30
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/wechat-token",
+      "dest": "/api/wechat-token.js"
+    },
+    {
+      "src": "/api/wechat-ticket", 
+      "dest": "/api/wechat-ticket.js"
+    }
+  ]
+}

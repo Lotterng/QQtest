@@ -78,7 +78,7 @@
           <li><strong>AppSecret:</strong> 0f62d3a8e4aec9eee4d02365d6ae0dda</li>
         </ul>
         <div class="alert alert-info" style="background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; padding: 10px; border-radius: 4px; margin: 10px 0;">
-          <strong>注意:</strong> 由于CORS跨域限制，已使用JSONP方式绕过。如果仍然失败，建议使用后端代理或在微信环境中测试。
+          <strong>注意:</strong> 已配置后端代理服务，可以避免CORS跨域问题。请确保后端代理服务正在运行。
         </div>
         <button class="btn" onclick="getWechatToken()">获取Access Token</button>
         <div id="tokenResult" class="result" style="display: none;"></div>
@@ -142,7 +142,7 @@
       });
 
       // 获取微信Access Token的函数
-      function getWechatToken() {
+      async function getWechatToken() {
         const appId = 'wx5f7ad87518d77bf3';
         const appSecret = '0f62d3a8e4aec9eee4d02365d6ae0dda';
         
@@ -151,12 +151,12 @@
         resultDiv.className = 'result loading';
         resultDiv.textContent = '正在请求中...';
         
-        // 使用JSONP方式绕过CORS限制
-        const script = document.createElement('script');
-        const callbackName = 'jsonpCallback_' + Date.now();
-        
-        // 创建全局回调函数
-        window[callbackName] = function(data) {
+        try {
+          // 使用后端代理API
+          const proxyUrl = `/api/wechat-token?appid=${appId}&secret=${appSecret}`;
+          const response = await fetch(proxyUrl);
+          const data = await response.json();
+          
           if (data.access_token) {
             resultDiv.className = 'result success';
             resultDiv.textContent = `请求成功！\n\nAccess Token: ${data.access_token}\n\n完整响应:\n${JSON.stringify(data, null, 2)}`;
@@ -169,29 +169,14 @@
             resultDiv.className = 'result error';
             resultDiv.textContent = `请求失败: ${data.errmsg || '未知错误'}\n\n完整响应:\n${JSON.stringify(data, null, 2)}`;
           }
-          
-          // 清理
-          document.head.removeChild(script);
-          delete window[callbackName];
-        };
-        
-        // 设置超时处理
-        setTimeout(() => {
-          if (window[callbackName]) {
-            resultDiv.className = 'result error';
-            resultDiv.textContent = `请求超时！\n\n可能的原因:\n1. 微信API不支持JSONP\n2. 网络连接问题\n\n建议使用后端代理或微信环境测试`;
-            document.head.removeChild(script);
-            delete window[callbackName];
-          }
-        }, 10000);
-        
-        // 创建JSONP请求
-        script.src = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}&callback=${callbackName}`;
-        document.head.appendChild(script);
+        } catch (error) {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `请求失败: ${error.message}\n\n可能的原因:\n1. 后端代理服务未启动\n2. 网络连接问题\n\n请确保后端代理服务正在运行`;
+        }
       }
 
                     // 获取微信JSAPI Ticket的函数
-       function getJsapiTicket() {
+       async function getJsapiTicket() {
          if (!window.currentAccessToken) {
            alert('请先获取Access Token！');
            return;
@@ -204,12 +189,12 @@
          resultDiv.className = 'result loading';
          resultDiv.textContent = '正在请求中...';
 
-         // 使用JSONP方式绕过CORS限制
-         const script = document.createElement('script');
-         const callbackName = 'jsonpCallback_' + Date.now();
-         
-         // 创建全局回调函数
-         window[callbackName] = function(data) {
+         try {
+           // 使用后端代理API
+           const proxyUrl = `/api/wechat-ticket?access_token=${accessToken}&type=jsapi`;
+           const response = await fetch(proxyUrl);
+           const data = await response.json();
+           
            if (data.ticket) {
              resultDiv.className = 'result success';
              resultDiv.textContent = `请求成功！\n\nJSAPI Ticket: ${data.ticket}\n\n完整响应:\n${JSON.stringify(data, null, 2)}`;
@@ -222,25 +207,10 @@
              resultDiv.className = 'result error';
              resultDiv.textContent = `请求失败: ${data.errmsg || '未知错误'}\n\n完整响应:\n${JSON.stringify(data, null, 2)}`;
            }
-           
-           // 清理
-           document.head.removeChild(script);
-           delete window[callbackName];
-         };
-         
-         // 设置超时处理
-         setTimeout(() => {
-           if (window[callbackName]) {
-             resultDiv.className = 'result error';
-             resultDiv.textContent = `请求超时！\n\n可能的原因:\n1. 微信API不支持JSONP\n2. 网络连接问题\n\n建议使用后端代理或微信环境测试`;
-             document.head.removeChild(script);
-             delete window[callbackName];
-           }
-         }, 10000);
-         
-         // 创建JSONP请求
-         script.src = `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${accessToken}&type=jsapi&callback=${callbackName}`;
-         document.head.appendChild(script);
+         } catch (error) {
+           resultDiv.className = 'result error';
+           resultDiv.textContent = `请求失败: ${error.message}\n\n可能的原因:\n1. 后端代理服务未启动\n2. 网络连接问题\n\n请确保后端代理服务正在运行`;
+         }
        }
 
              // 生成微信JS接口签名的函数
